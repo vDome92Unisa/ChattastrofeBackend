@@ -1,0 +1,28 @@
+[
+    {
+        "nome": "Domenico",
+        "cognome": "Vaiano",
+        "username": "prova2502",
+        "password": "jphv",
+        "sesso": "m",
+        "eta": 32,
+        "email": "vaiano992@gmail.com",
+        "citta": "portico di caserta",
+        "situazioneSentimentale": "fidanzato",
+        "professione": "mah",
+        "hobby": "programmazione"
+    },
+    {
+        "nome": "Nome",
+        "cognome": "Cognome",
+        "username": "user",
+        "password": "whzz",
+        "sesso": "",
+        "eta": "",
+        "email": "",
+        "citta": "",
+        "situazioneSentimentale": "",
+        "professione": "",
+        "hobby": ""
+    }
+]

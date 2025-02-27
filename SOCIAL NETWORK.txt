@@ -1,0 +1,9 @@
+SOCIAL NETWORK
+-Definire degli utenti.
+-Registrazione.(Nome, Cognome, *Username, Password).
+-Login.(*Username, Password).
+-Home.(Per visualizzare i post pubblicati dagli utenti).
+-Post(Titolo, contenuto, associato univocamente ad un utente, timestamp di pubblicazione, ordinati dal più nuovo al più vecchio).
+-Profilo(Nome, cognome, e i post di questo utente specifico).
+L'utente deve essere passato in query string per creare altre rotte
+File Json per salvare utenti e post.

@@ -1,0 +1,37 @@
+[
+    {
+        "titolo": "post 1",
+        "testo": "ai biscotti",
+        "username": "user",
+        "id": 1,
+        "data": "2025-02-25T16:48:34.120+01:00"
+    },
+    {
+        "titolo": "post 1",
+        "testo": "ai biscotti",
+        "username": "user",
+        "id": 2,
+        "data": "2025-02-25T16:48:40.371+01:00"
+    },
+    {
+        "titolo": "df",
+        "testo": "dggd",
+        "username": "user",
+        "id": 3,
+        "data": "2025-02-25T16:49:01.313+01:00"
+    },
+    {
+        "titolo": "ciccio",
+        "testo": "parsticcio",
+        "username": "user",
+        "id": 4,
+        "data": "2025-02-26T08:53:56.218+01:00"
+    },
+    {
+        "titolo": "spweriMODFV",
+        "testo": "FGAWEBG",
+        "username": "user",
+        "id": 5,
+        "data": "2025-02-26T08:54:45.930+01:00"
+    }
+]
