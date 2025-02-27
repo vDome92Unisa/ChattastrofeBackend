@@ -27,9 +27,9 @@ router.post("/", verifyToken, validazionePost, (req, res, next) => {
 
 // Rotta per eliminare un post, richiede l'id del post e l'username dell'utente che lo ha creato
 // Controlla che il post esista e se si procede con l'eliminazione
-router.post("/elimina", (req, res, next) => {
+router.post("/elimina", verifyToken, (req, res, next) => {
     try{
-        const username = req.body.username;
+        const username = req.username;
         const id = req.body.id;
         const post = leggiPost();
         const postDaEliminare = post.find((p) => p.username === username && p.id === id);
@@ -50,9 +50,9 @@ router.post("/elimina", (req, res, next) => {
 // Rotta per modificare un post, richiede l'id del post e l'username dell'utente che lo ha creato
 // Controlla che il post esista e se si procede con la modifica
 // Gli assegna la data attuale e il flag modificato a true
-router.post("/modifica", (req, res, next) => {
+router.post("/modifica", verifyToken, (req, res, next) => {
     try{
-        const username = req.body.username;
+        const username = req.username;
         const id = req.body.id;
         const post = leggiPost();
         const postDaModificare = post.find((p) => p.username === username && p.id === id);
@@ -76,9 +76,9 @@ router.post("/modifica", (req, res, next) => {
 // Rotta per aggiungere un like ad un post, richiede l'id del post e l'username dell'utente che lo ha creato
 // Controlla che il post esista e se si procede con l'aggiunta del like
 // Se l'utente ha già messo like al post, lo rimuove
-router.post("/like", (req, res, next) => {
+router.post("/like", verifyToken, (req, res, next) => {
     try {
-        const username = req.body.username;
+        const username = req.username;
         const id = req.body.id;
         const post = leggiPost();
         const postDaLike = post.find((p) => p.id === id);

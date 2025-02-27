@@ -24,5 +24,11 @@
         "situazioneSentimentale": "",
         "professione": "",
         "hobby": ""
+    },
+    {
+        "nome": "nome",
+        "cognome": "cognome",
+        "username": "user1",
+        "password": "whzz8"
     }
 ]

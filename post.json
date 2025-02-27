@@ -25,7 +25,11 @@
         "testo": "parsticcio",
         "username": "user",
         "id": 4,
-        "data": "2025-02-26T08:53:56.218+01:00"
+        "data": "2025-02-26T08:53:56.218+01:00",
+        "likes": [
+            "user"
+        ],
+        "like": 1
     },
     {
         "titolo": "spweriMODFV",
@@ -33,5 +37,13 @@
         "username": "user",
         "id": 5,
         "data": "2025-02-26T08:54:45.930+01:00"
+    },
+    {
+        "titolo": "tjd",
+        "testo": "dtyjethath",
+        "username": "user1",
+        "id": 7,
+        "data": "2025-02-27T12:58:43.437+01:00",
+        "modificato": true
     }
 ]
