@@ -82,10 +82,9 @@ const utente = utenti.find((u) => u.username === username);
 
 // Rotta per visualizzare i dati dell'utente nella barra laterale, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste visualizza i dati dell'utente
-router.post("/profilo/datiutente",verifyToken, (req, res, next) => {
-const username = req.username;
+router.get("/profilo/datiutente",verifyToken, (req, res, next) => {
 const utenti = leggiUtenti();
-const utente = utenti.find((u) => u.username === username);
+const utente = utenti.find((u) => u.username === req.username);
 if(!utente){
     res.status(404);
     next(new Error("Utente non trovato"));
