@@ -3,7 +3,7 @@ import { verifyToken } from "./token.js";
 import { ordinamentoPost } from "./functionPost.js";
 import { DateTime } from "luxon";
 import jwt from "jsonwebtoken";
-import{validazioneLogin, validazioneReg, datiUtente, cryptoPassword, decryptoPassword, leggiUtenti, scriviUtenti, trovaUtente} from "./functionUtenti.js";
+import{validazioneLogin, validazioneReg, datiUtente, cryptoPassword, decryptoPassword, leggiUtenti, scriviUtenti, trovaUtente, trovaUsername} from "./functionUtenti.js";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.post("/login", validazioneLogin, async (req, res, next) => {
     const utenteEsistente = await trovaUtente(utente);
 
     if (utenteEsistente.username == utente.username) {
-        if (utenteEsistente.password !== utente.password) {
+        if (decryptoPassword(utenteEsistente.password) !== utente.password) {
             res.status(400);
             next(new Error("Password errata"));
             } else {
@@ -43,15 +43,18 @@ router.post("/login", validazioneLogin, async (req, res, next) => {
 // Rotta per la registrazione, richiede la validazione della registrazione e controlla se l'utente esiste
 // Se l'utente non esiste scrive l'utente nel file utenti.json
 router.post("/registrazione", validazioneReg, async (req, res, next) => {
-    const utenti = await leggiUtenti();
-    const utente = req.body;
-    const utenteEsistente = utenti.find((u) => u.username === utente.username);
-    if (utenteEsistente) {
-        res.status(404);
-        next(new Error("Utente già esistente"));
-        } else {
+    try{ 
+        const utente = req.body;
+        const usernameEsistente = await trovaUsername(utente.username);
+
+        if (!usernameEsistente)  {
             scriviUtenti(utente);
+            res.status(200).send("Utente aggiunto con successo");
         }
+    }catch(err){
+        res.status(500);
+        next(new Error(err.message));
+    }
 });
 
 // Rotta per visualizzare il profilo dell'utente, richiede il token e controlla se l'utente esiste

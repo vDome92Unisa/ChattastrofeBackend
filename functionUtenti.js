@@ -84,6 +84,20 @@ export const trovaUtente = (utente) => {
     });  
 };
 
+export const trovaUsername = (username) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT utenti.username FROM chattastrofe.utenti WHERE utenti.username = '${ username }' LIMIT 1`, (err, result) => {
+            if(err){
+                console.log(err);
+                reject("Errore");
+            }else if(result.rows.length === 0){
+                resolve (false)
+            }else{
+                reject(new Error("Utente già esistente"));
+            }
+        });
+    });  
+};
 // Funzione per scrivere gli utenti nel file utenti.json, se non presenti, dopo averli crittografati
 /*export const scriviUtenti = (req, res, next) => {
     try {
@@ -99,9 +113,9 @@ export const trovaUtente = (utente) => {
     }
 };*/
 
-export const scriviUtenti = () => {
+export const scriviUtenti = (utente) => {
     return new Promise((resolve, reject) => {
-        pool.query(`INSERT INTO utenti (username, nome, cognome, password) VALUES ($1, $2, $3, $4)`, [utente.username, utente.nome, utente.cognome, cryptoPassword(utente.password)], (err, result) => {
+        pool.query(`INSERT INTO chattastrofe.utenti (username, nome, cognome, password) VALUES ($1, $2, $3, $4)`, [utente.username, utente.nome, utente.cognome, cryptoPassword(utente.password)], (err, result) => {
             if(err){
                 console.log(err);
                 reject();
