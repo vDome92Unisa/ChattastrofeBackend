@@ -60,41 +60,44 @@ router.post("/registrazione", validazioneReg, async (req, res, next) => {
 // Rotta per visualizzare il profilo dell'utente, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste visualizza i post dell'utente
 router.get("/profilo", verifyToken, async (req, res, next) => {
-
-    const utente = await leggiUtenti().find((u) => u.username === req.username);
+try{
+    const utente = await leggiUtenti();
     const post = ordinamentoPost();
     const postUtente = post.filter((p) => p.username === req.username);
     post.forEach(p => {
         p.data = DateTime.fromISO(p.data).toLocaleString(DateTime.DATETIME_MED);
         });
     res.status(200).send(postUtente);   
+}catch(err){
+    res.status(500);
+    next(new Error(err.message));
+}
 });
 
 // Rotta per modificare o inserire ulteriori dati dell'utente, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste modifica i dati dell'utente
-router.post("/profilo/areapersonale",verifyToken, datiUtente, async (req, res, next) => {
-const username = req.username;
-const utenti = await leggiUtenti();
-const utente = utenti.find((u) => u.username === username);
-    if(!utente){
-        res.status(404);
-        next(new Error("Utente non trovato"));
-        }else{
-            res.status(200).send(utente);
-        }
+router.post("/profilo/areapersonale", verifyToken, async (req, res, next) => {
+try{
+    const utente = req;
+    await datiUtente(utente);
+        res.status(200).send("Utente aggiornato con successo");
+}catch(err){
+    res.status(500);
+    next(new Error(err.message));
+}
 });
 
 // Rotta per visualizzare i dati dell'utente nella barra laterale, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste visualizza i dati dell'utente
-router.get("/profilo/datiutente",verifyToken, async (req, res, next) => {
-const utenti = await leggiUtenti();
-const utente = utenti.find((u) => u.username === req.username);
-if(!utente){
-    res.status(404);
-    next(new Error("Utente non trovato"));
-    }else{
-        res.status(200).send(utente);
-    }
+router.get("/profilo/datiutente", verifyToken, async (req, res, next) => {
+
+try{
+    const utente = await leggiUtenti(req.username);
+    res.status(200).send(utente);
+}catch(err){
+    res.status(500);
+    next(new Error(err.message));
+}
 });
 
 router.use((err, req, res, next) => {

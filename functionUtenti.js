@@ -20,29 +20,18 @@ export function decryptoPassword(password) {
 }
 
 // Funzione per aggiungere ulteriori dati all'utente se trova il suo username
-export const datiUtente = async (req, res, next) => {
-    try{
-        const utenti = await leggiUtenti();
-        const utente = utenti.find((u) => u.username === req.username);
-        if(!utente){
-            res.status(404);
-            next(new Error("Utente non trovato"));
+export const datiUtente = async (utente) => {
+    
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE chattastrofe.utenti SET eta = '${utente.body.eta}' WHERE utenti.username = '${utente.username}'`, (err, result) => {
+            if(err){
+                console.log(err);
+                reject("Errore nella lettura degli utenti");
             }else{
-                req.utente = utente;
-                utente.sesso = req.body.sesso;
-                utente.eta = req.body.eta;
-                utente.email = req.body.email;
-                utente.citta = req.body.citta;
-                utente.situazioneSentimentale = req.body.situazioneSentimentale;
-                utente.professione = req.body.professione;
-                utente.hobby = req.body.hobby;
-                fs.writeFileSync("utenti.json", JSON.stringify(utenti, null, 4));
-                next();
+                resolve (true);
             }
-    }catch(error){
-        res.status(500);
-        next(new Error("Errore nella modifica dati utente"));
-    }
+        });
+    });
 };
 
 // Funzione per leggere gli utenti dal file utenti.json
@@ -56,14 +45,14 @@ export const datiUtente = async (req, res, next) => {
     }
 };*/
 
-export const leggiUtenti = () => {
+export const leggiUtenti = (username) => {
     return new Promise((resolve, reject) => {
-        pool.query("SELECT * FROM chattastrofe.utenti", (err, result) => {
+        pool.query(`SELECT * FROM chattastrofe.utenti WHERE utenti.username = '${username}'`, (err, result) => {
             if(err){
                 console.log(err);
                 reject("Errore nella lettura degli utenti");
             }else{
-                resolve (result.rows);
+                resolve (result.rows[0]);
             }
         });
     });  
