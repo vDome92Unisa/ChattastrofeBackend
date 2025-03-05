@@ -1,4 +1,5 @@
 import fs from "fs";
+import pool from "./db.js";
 
 // Funzione per la crittografia della password
 export function cryptoPassword(password) {
@@ -19,9 +20,9 @@ export function decryptoPassword(password) {
 }
 
 // Funzione per aggiungere ulteriori dati all'utente se trova il suo username
-export const datiUtente = (req, res, next) => {
+export const datiUtente = async (req, res, next) => {
     try{
-        const utenti = leggiUtenti();
+        const utenti = await leggiUtenti();
         const utente = utenti.find((u) => u.username === req.username);
         if(!utente){
             res.status(404);
@@ -45,7 +46,7 @@ export const datiUtente = (req, res, next) => {
 };
 
 // Funzione per leggere gli utenti dal file utenti.json
-export const leggiUtenti = () => {
+/*export const leggiUtenti = () => {
     try {
         const datiRaw = fs.readFileSync("utenti.json").toString("utf-8");
         const dati = JSON.parse(datiRaw);
@@ -53,10 +54,38 @@ export const leggiUtenti = () => {
     } catch (error) {
         return [];
     }
+};*/
+
+export const leggiUtenti = () => {
+    return new Promise((resolve, reject) => {
+        pool.query("SELECT * FROM chattastrofe.utenti", (err, result) => {
+            if(err){
+                console.log(err);
+                reject("Errore nella lettura degli utenti");
+            }else{
+                resolve (result.rows);
+            }
+        });
+    });  
+};
+
+export const trovaUtente = (utente) => {
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT utenti.username, utenti.password FROM chattastrofe.utenti WHERE utenti.username = '${ utente.username }' LIMIT 1`, (err, result) => {
+            if(err){
+                console.log(err);
+                reject("Errore");
+            }else if(result.rows.length === 0){
+                reject(new Error("Utente non trovato"));
+            }else{
+                resolve (result.rows[0]);
+            }
+        });
+    });  
 };
 
 // Funzione per scrivere gli utenti nel file utenti.json, se non presenti, dopo averli crittografati
-export const scriviUtenti = (req, res, next) => {
+/*export const scriviUtenti = (req, res, next) => {
     try {
         const nuovoUtente = req.body;
         const dati = leggiUtenti();
@@ -68,7 +97,20 @@ export const scriviUtenti = (req, res, next) => {
         res.status(500);
         next(new Error("Errore nella scrittura dell'utente"));
     }
-};
+};*/
+
+export const scriviUtenti = () => {
+    return new Promise((resolve, reject) => {
+        pool.query(`INSERT INTO utenti (username, nome, cognome, password) VALUES ($1, $2, $3, $4)`, [utente.username, utente.nome, utente.cognome, cryptoPassword(utente.password)], (err, result) => {
+            if(err){
+                console.log(err);
+                reject();
+            }else{
+                resolve("Utente aggiunto con successo");
+            }
+        });
+    });
+}
 
 // Funzione per la validazione del login
 export function validazioneLogin(req, res, next){

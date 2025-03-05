@@ -5,6 +5,7 @@ import { verifyToken } from "./token.js";
 import utenti from "./utenti.js";
 import post from "./post.js";
 import { DateTime } from "luxon";
+import pool from "./db.js";
 
 const app = express();
 app.use(cors("*"));

@@ -3,7 +3,7 @@ import { verifyToken } from "./token.js";
 import { ordinamentoPost } from "./functionPost.js";
 import { DateTime } from "luxon";
 import jwt from "jsonwebtoken";
-import{validazioneLogin, validazioneReg, datiUtente, cryptoPassword, decryptoPassword, leggiUtenti, scriviUtenti} from "./functionUtenti.js";
+import{validazioneLogin, validazioneReg, datiUtente, cryptoPassword, decryptoPassword, leggiUtenti, scriviUtenti, trovaUtente} from "./functionUtenti.js";
 
 const router = Router();
 
@@ -11,13 +11,13 @@ const router = Router();
 
 // Rotta per il login, richiede la validazione del login e controlla se l'utente esiste e se la password è corretta
 // Se tutto è corretto genera un token con scadenza di 1 ora
-router.post("/login", validazioneLogin, (req, res, next) => {
+router.post("/login", validazioneLogin, async (req, res, next) => {
+    try{
     const utente = req.body;
-    const utenti = leggiUtenti();
-    const utenteEsistente = utenti.find((u) => u.username === utente.username);
+    const utenteEsistente = await trovaUtente(utente);
 
-    if (utenteEsistente) {
-        if (decryptoPassword(utenteEsistente.password) !== utente.password) {
+    if (utenteEsistente.username == utente.username) {
+        if (utenteEsistente.password !== utente.password) {
             res.status(400);
             next(new Error("Password errata"));
             } else {
@@ -33,31 +33,32 @@ router.post("/login", validazioneLogin, (req, res, next) => {
                         }
                     });
                 }
-    } else {
-        res.status(404);
-        next(new Error("Utente non trovato"));
+    }
+    }catch(err){
+        res.status(500);
+        next(new Error(err.message));
     }
 });
 
 // Rotta per la registrazione, richiede la validazione della registrazione e controlla se l'utente esiste
 // Se l'utente non esiste scrive l'utente nel file utenti.json
-router.post("/registrazione", validazioneReg, (req, res, next) => {
-    const utenti = leggiUtenti();
+router.post("/registrazione", validazioneReg, async (req, res, next) => {
+    const utenti = await leggiUtenti();
     const utente = req.body;
     const utenteEsistente = utenti.find((u) => u.username === utente.username);
     if (utenteEsistente) {
         res.status(404);
         next(new Error("Utente già esistente"));
         } else {
-            scriviUtenti(req, res, next);
+            scriviUtenti(utente);
         }
 });
 
 // Rotta per visualizzare il profilo dell'utente, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste visualizza i post dell'utente
-router.get("/profilo", verifyToken, (req, res, next) => {
+router.get("/profilo", verifyToken, async (req, res, next) => {
 
-    const utente = leggiUtenti().find((u) => u.username === req.username);
+    const utente = await leggiUtenti().find((u) => u.username === req.username);
     const post = ordinamentoPost();
     const postUtente = post.filter((p) => p.username === req.username);
     post.forEach(p => {
@@ -68,9 +69,9 @@ router.get("/profilo", verifyToken, (req, res, next) => {
 
 // Rotta per modificare o inserire ulteriori dati dell'utente, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste modifica i dati dell'utente
-router.post("/profilo/areapersonale",verifyToken, datiUtente, (req, res, next) => {
+router.post("/profilo/areapersonale",verifyToken, datiUtente, async (req, res, next) => {
 const username = req.username;
-const utenti = leggiUtenti();
+const utenti = await leggiUtenti();
 const utente = utenti.find((u) => u.username === username);
     if(!utente){
         res.status(404);
@@ -82,8 +83,8 @@ const utente = utenti.find((u) => u.username === username);
 
 // Rotta per visualizzare i dati dell'utente nella barra laterale, richiede il token e controlla se l'utente esiste
 // Se l'utente esiste visualizza i dati dell'utente
-router.get("/profilo/datiutente",verifyToken, (req, res, next) => {
-const utenti = leggiUtenti();
+router.get("/profilo/datiutente",verifyToken, async (req, res, next) => {
+const utenti = await leggiUtenti();
 const utente = utenti.find((u) => u.username === req.username);
 if(!utente){
     res.status(404);
